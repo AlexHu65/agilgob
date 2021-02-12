@@ -40,18 +40,20 @@ $('.list-group-item').on('click', function(e){
 
 
     let sede_id = $(this).attr('data-sede');
-    let date = $(this).attr('data-date');
+    let hora_inicial = $(this).attr('data-date');
     let base_url = $('meta[name="url"]').attr('content');
 
     $.ajax({
        type:'POST',
        url:`${base_url}/citas/add`,
-       data:{sede_id:sede_id, date:date},
+       data:{sede_id:sede_id, hora_inicial:hora_inicial},
        headers: {
         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
        success:function(data){
             alert(data.success);
+            window.location.reload();
+            
         }
     });
 
