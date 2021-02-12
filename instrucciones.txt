@@ -1,0 +1,10 @@
+1. Migraciones para todas las bases de datos.
+2. 3 sedes para la entrevista
+3. Tiempo maximo de 20 minutos por entrevista 3 personas cada hora. (dividir cada hora en rangos de 20 min para la seleccion de las mismas)
+4. 8 horas por cada empleado, debe poder atender 24 personas
+5. 14 dias de entrevistas a partir del 1 de marzo
+
+
+//Se integran seeders
+
+php artisan db:seed --class=SedesSeeder
