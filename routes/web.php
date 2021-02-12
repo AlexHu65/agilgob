@@ -13,3 +13,4 @@
 Route::get('/', 'HomeController@index')->name('home');
 Route::get('/sedes/{id}', 'SedesController@index')->name('sedes');
 Route::get('/citas', 'CitasController@add')->name('citas.add');
+Route::post('/citas/add', 'CitasController@add')->name('ajaxRequest.post');

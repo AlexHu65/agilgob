@@ -43,7 +43,7 @@
                   @php
                       $date = $value['sede_inicio'];                      
                   @endphp
-                  <li class="list-group-item list-group-item-action">{{$hora . ' '. $date->format('Y-m-d')}}</li>
+                  <li  data-sede="{{$sede->id}}" data-date="{{$date->format('Y-m-d') .' '. $hora}}" class="list-group-item list-group-item-action">{{$hora . ' '. $date->format('Y-m-d')}}</li>
                 @endforeach
 
               @endif

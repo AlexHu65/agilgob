@@ -13,59 +13,39 @@ class CitasController extends Controller
 {
     //post citas to save
 
-    public function add(Request $request){
-
-        $dates_avaliables = [];
-        $array_intervarlo = [];
-        $intervalo = [];
-        $cont = 0;
-        $dates_sedes = Sedes::select(['sede_inicio', 'sede_fin', 'id'])->where(['activo' => 1])->get();
+    public function add(Request $request){    
         
-        foreach ($dates_sedes as $fecha) {
-            $dates_avaliables[$cont]['sede_inicio'] =  $fecha->sede_inicio;
-            $dates_avaliables[$cont]['sede_fin'] =  $fecha->sede_fin;
-            $dates_avaliables[$cont]['sede_id'] =  $fecha->id;
-            $cont++;
+        $user_id =  User::inRandomOrder()->first();
+        $entrevistador_id =  Entrevistador::where(['activo' => 1])->inRandomOrder()->first();
+        $sede_id =  Sedes::where(['activo' => 1])->inRandomOrder()->first();
+        
+        $citas = new Citas;
+        $citas->user_id = $user_id->id;
+        $citas->entrevistador_id = $entrevistador_id->id;
+        $citas->hora_inicial = date('Y-m-d H:i:s');
+        $citas->hora_final = date('Y-m-d H:i:s');
+        $citas->activo = 1;            
+
+        if($citas->save()){
+            //save pivot
+            $cita_id = $citas->id;
+            $citas_sede = new CitasSedes;
+
+            $citas_sede->sede_id = $sede_id->id;
+            $citas_sede->cita_id = $cita_id;
+
+            if($citas_sede->save()){
+
+                $citas_entrevistador = new CitaEntrevistador;
+                $citas_entrevistador->cita_id =  $cita_id;
+                $citas_entrevistador->entrevistador_id =  $entrevistador_id->id;
+                $citas_entrevistador->save();
+            }
         }
-
-
-        for ($i=0; $i < count($dates_avaliables); $i++) { 
-
-            //sacamos el intervalo
-            $dates_avaliables[$i]['sede_inicio'] = new DateTime($dates_avaliables[$i]['sede_inicio']);
-            $dates_avaliables[$i]['sede_fin'] = new DateTime($dates_avaliables[$i]['sede_fin']);
-
-            $forma_inicio  = $dates_avaliables[$i]['sede_inicio'];
-            $forma_fin  = $dates_avaliables[$i]['sede_fin'];    
-
-            $array_intervarlo[$i]['horas'] = $this->intervaloHora($forma_inicio->format('H:i:s'), $forma_fin->format('H:i:s'));
-            $array_intervarlo[$i]['sede_inicio'] = $dates_avaliables[$i]['sede_inicio'];
-            $array_intervarlo[$i]['sede_fin'] = $dates_avaliables[$i]['sede_fin'];
-            $array_intervarlo[$i]['sede_id'] = $dates_avaliables[$i]['sede_id'];
-        }        
+        
 
     }
 
 
-    public function intervaloHora($hora_inicio, $hora_fin, $intervalo = 20) {
-
-        $hora_inicio = new DateTime( $hora_inicio );
-        $hora_fin    = new DateTime( $hora_fin );
-        $hora_fin->modify('+1 second'); 
-
-        if ($hora_inicio > $hora_fin) {
     
-            $hora_fin->modify('+1 day');
-        }
-    
-        
-        $intervalo = new DateInterval('PT'.$intervalo.'M');
-
-        $periodo   = new DatePeriod($hora_inicio, $intervalo, $hora_fin);        
-    
-        foreach( $periodo as $hora ) {
-            $horas[] =  $hora->format('H:i:s');
-        }    
-        return $horas;
-    }
 }

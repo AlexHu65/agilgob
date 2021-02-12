@@ -49766,6 +49766,27 @@ var app = new Vue({
   el: '#app'
 }); //funciones
 
+$('.list-group-item').on('click', function (e) {
+  e.preventDefault();
+  var sede_id = $(this).attr('data-sede');
+  var date = $(this).attr('data-date');
+  var base_url = $('meta[name="url"]').attr('content');
+  $.ajax({
+    type: 'POST',
+    url: "".concat(base_url, "/citas/add"),
+    data: {
+      sede_id: sede_id,
+      date: date
+    },
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    },
+    success: function success(data) {
+      alert(data.success);
+    }
+  });
+});
+
 /***/ }),
 
 /***/ "./resources/js/bootstrap.js":
